@@ -10,7 +10,7 @@ The idea is to allow files upload with a very low memory consumption.
 Install the latest version with
 
 ```
-$ composer require monolog/monolog
+$ composer require ecolinet/large-file
 ```
 
 # How to ?

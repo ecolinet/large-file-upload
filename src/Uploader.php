@@ -50,9 +50,14 @@ class Uploader
     /**
      * Uploader constructor.
      *
-     * Optionally provide à $_SERVER array
+     * Optionally provide :
+     *  - a $_SERVER array
+     *  - a TEMP directory
+     *  - a buffer size to use with fread calls
      *
-     * @param array $_server
+     * @param array|null $_server
+     * @param string|null $tmpDir
+     * @param int|null $bufferSize
      */
     public function __construct(array $_server = null, $tmpDir = null, $bufferSize = null)
     {
@@ -73,41 +78,38 @@ class Uploader
      */
     public function read($inputFile = 'php://input')
     {
-        try {
-            if ($this->_server['REQUEST_METHOD'] !== 'POST') {
-                $this->handleError();
-            }
-
-            //$totalLength = $this->_server['CONTENT_LENGTH'];
-            $contentTypeParts = preg_split('/; boundary=/', $this->_server['CONTENT_TYPE']);
-
-            if ($contentTypeParts[0] !== 'multipart/form-data') {
-                $this->handleError();
-            }
-            if (!isset($contentTypeParts[1]) || empty($contentTypeParts[1])) {
-                $this->handleError();
-            }
-            $this->boundary = '--' . $contentTypeParts[1];
-
-            // Open file handle
-            $this->inputHandle = fopen($inputFile, 'rb');
-            if (!$this->inputHandle) {
-                $this->handleError();
-            }
-
-            $parts = array();
-            $this->buffer = '';
-            do {
-                $part = $this->readMimePart();
-                if ($part === null) {
-                    break;
-                }
-                $parts[] = $part;
-            } while (1);
-
-        } catch (\Exception $e) {
-            $this->handleError($e);
+        if ($this->_server['REQUEST_METHOD'] !== 'POST') {
+            $this->handleError("HTTP request is not 'POST'");
         }
+
+        //$totalLength = $this->_server['CONTENT_LENGTH'];
+        $contentTypeParts = preg_split('/; boundary=/', $this->_server['CONTENT_TYPE']);
+
+        if ($contentTypeParts[0] !== 'multipart/form-data') {
+            $this->handleError("Bad content type");
+        }
+
+        if (!isset($contentTypeParts[1]) || empty($contentTypeParts[1])) {
+            $this->handleError("No boundary defined");
+        }
+
+        $this->boundary = '--' . $contentTypeParts[1];
+
+        // Open file handle
+        $this->inputHandle = fopen($inputFile, 'rb');
+        if (!$this->inputHandle) {
+            $this->handleError("Unable to open input file");
+        }
+
+        $parts = array();
+        $this->buffer = '';
+        do {
+            $part = $this->readMimePart();
+            if ($part === null) {
+                break;
+            }
+            $parts[] = $part;
+        } while (1);
 
         return $parts;
     }
@@ -126,9 +128,9 @@ class Uploader
             return null;
         }
 
-        // Check boundary
+        // Check that it starts with the boundary
         if (strpos($this->buffer, $this->boundary) !== 0) { // read boundary
-            $this->handleError($this->buffer, $this->boundary);
+            $this->handleError("Input data does not start with the boundary");
         }
 
         // Get buffer w/o boundary
@@ -138,20 +140,19 @@ class Uploader
         $headers = array();
         while (!feof($this->inputHandle)) {
             $header = rtrim(fgets($this->inputHandle));
-
             if ($header == '') { // Skip headers if the line is empty
                 break;
             }
 
             $headerParts = preg_split('/; /', $header);
             if (!is_array($headerParts) || !count($headerParts)) {
-                $this->handleError();
+                $this->handleError("Invalid MIME header");
             }
 
             // First header line
             $mainHeader = preg_split('/: /', $headerParts[0]);
             if (!is_array($mainHeader) || count($mainHeader) != 2) {
-                $this->handleError();
+                $this->handleError("Invalid MIME header");
             }
             $headers[$mainHeader[0]] = $mainHeader[1];
 
@@ -159,7 +160,7 @@ class Uploader
             for ($i = 1; $i < count($headerParts); $i++) {
                 $headerLineParts = preg_split('/=/', $headerParts[$i]);
                 if (!is_array($headerLineParts) || count($headerLineParts) != 2) {
-                    $this->handleError();
+                    $this->handleError("Invalid MIME header");
                 }
                 $headers[$headerLineParts[0]] = $headerLineParts[1];
             }
@@ -167,7 +168,7 @@ class Uploader
 
         // Check header
         if (!isset($headers['name'])) {
-            $this->handleError();
+            $this->handleError("No 'name' header");
         }
         $headers['name'] = trim($headers['name'], '"');
 

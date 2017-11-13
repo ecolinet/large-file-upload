@@ -1,6 +1,6 @@
 {
     "name": "ecolinet/large-files",
-    "description": "Allow files upload with a very low memory consumption",
+    "description": "Allow file uploads with a very low memory consumption",
     "tags": [ "upload", "memory", "enable_post_data_reading" ],
     "type": "library",
     "license": "GPL-3.0",

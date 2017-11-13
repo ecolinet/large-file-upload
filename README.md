@@ -4,6 +4,15 @@ The class is a way to make use of PHP's built-in [`enable_post_data_reading`](ht
 
 The idea is to allow files upload with a very low memory consumption.
 
+
+# Installation
+
+Install the latest version with
+
+```
+$ composer require monolog/monolog
+```
+
 # How to ?
 
 
@@ -37,7 +46,7 @@ Here is an example if you are using `php-fpm` :
 enable_post_data_reading=0
 ```
 
-**Note :** unlike `.htaccess` files, that kind of files are cached among requests (300s per default), so you can safely use them.
+**Note :** unlike `.htaccess` files, that kind of files are cached among requests (300s per default), so you can use them without the performance penalty.
 
 
 ## Use the class
@@ -52,9 +61,8 @@ $parts = $uploader->read();
 `$parts` will be an array of elements composed of :
 
 - `headers` : array of all [`MIME`](https://en.wikipedia.org/wiki/MIME) headers sent by the browser
-- _whether_ :
-  - `file` : local filename of an uploaded file
-  - `content` : content of a posted field
+- `file` : local filename of an uploaded file
+- _or_ `content` : content of a posted field
 
 ## Typical setup
 

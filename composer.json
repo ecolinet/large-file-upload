@@ -1,5 +1,5 @@
 {
-    "name": "ecolinet/large-files",
+    "name": "ecolinet/large-files-upload",
     "description": "Allow file uploads with a very low memory consumption",
     "tags": [ "upload", "memory", "enable_post_data_reading" ],
     "type": "library",

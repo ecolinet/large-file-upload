@@ -1,4 +1,4 @@
-# Large File uploader
+# Large File Upload
 
 The class is a way to make use of PHP's built-in [`enable_post_data_reading`](http://php.net/manual/en/ini.core.php#ini.enable-post-data-reading) setting.
 
@@ -7,16 +7,17 @@ The idea is to allow files upload with a very low memory consumption.
 
 # Installation
 
-Install the latest version with
+Install the latest version with :
 
 ```
-$ composer require ecolinet/large-file
+$ composer require ecolinet/large-file-upload
 ```
 
 # How to ?
 
 
 ## Deactivate `enable_post_data_reading`
+
 First be sure to set `enable_post_data_reading` to `0` on a _specific_ directory (e.g. `public/upload/`).
 
 There are [many ways to do that](http://php.net/manual/en/configuration.changes.php), 

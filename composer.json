@@ -1,5 +1,5 @@
 {
-    "name": "ecolinet/large-files-upload",
+    "name": "ecolinet/large-file-upload",
     "description": "Allow file uploads with a very low memory consumption",
     "tags": [ "upload", "memory", "enable_post_data_reading" ],
     "type": "library",
@@ -12,7 +12,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "LargeFile\\": "large-file/src"
+            "LargeFile\\": "src"
         }
     }
 }

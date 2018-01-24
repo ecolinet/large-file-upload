@@ -4,6 +4,7 @@ The class is a way to make use of PHP's built-in [`enable_post_data_reading`](ht
 
 The idea is to allow files upload with a very low memory consumption.
 
+**Note :** due to a [bug in the PHP-FPM SAPI](https://bugs.php.net/bug.php?id=75741), that package doesn't, _currently_, works with PHP-FPM. 
 
 # Installation
 

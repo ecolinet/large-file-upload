@@ -1,9 +1,9 @@
 {
-    "name": "ecolinet/large-file-upload",
+    "name": "quicky/large-file-upload",
     "description": "Allow file uploads with a very low memory consumption",
     "tags": [ "upload", "memory", "enable_post_data_reading" ],
     "type": "library",
-    "license": "GPL-3.0",
+    "license": "MIT",
     "authors": [
         {
             "name": "Eric Colinet",
